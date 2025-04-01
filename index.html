@@ -3,92 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Recognition Chatbot</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
-    <!-- Environment Variables -->
-    <script>
-        window._env = {
-            EMAILJS_SERVICE_ID: 'service_dqganhw',
-            EMAILJS_TEMPLATE_ID: 'template_wavm5up',
-            EMAILJS_USER_ID: 'tXX17RsjHw9DKzwVu',
-            GEMINI_API_KEY: 'AIzaSyDX_UFZbUAp74JY0T9Jf7_Dq__5zaz_sPc'
-        };
-    </script>
-    <!-- Load EmailJS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <!-- Load TensorFlow.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
-    <!-- Load the Gemini API -->
-    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.2.0/dist/web/index.js"></script>
+    <title>Face Recognition App</title>
+    <style>
+        /* Add your CSS styles here */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #video-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        #video {
+            width: 100%;
+            max-width: 640px;
+            border: 1px solid #ccc;
+        }
+        #captured-frame {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
 </head>
 <body>
-    <div id="blur-overlay" class="blur-overlay hidden"></div>
-
     <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-robot"></i> Image Recognition Chatbot</h1>
-            <button id="menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
+        <h1>Face Recognition App</h1>
+        <div id="video-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="captured-frame"></canvas>
         </div>
-
-        <div class="webcam-container">
-            <video id="webcam" autoplay playsinline></video>
-            <div class="button-group">
-                <button id="start-webcam" class="primary-btn"><i class="fas fa-camera"></i> Start Webcam</button>
-                <button id="capture-btn" class="primary-btn" disabled><i class="fas fa-camera-retro"></i> Capture</button>
-                <button id="upload-btn" class="primary-btn"><i class="fas fa-upload"></i> Upload Image</button>
-                <input type="file" id="image-input" accept="image/*" hidden>
-            </div>
+        <div class="controls">
+            <button id="capture-btn">Capture and Analyze</button>
         </div>
-
-        <div id="chatbot-popup" class="popup hidden">
-            <div class="popup-header">
-                <button class="popup-close-btn"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="popup-content">
-                <div class="left-panel">
-                    <canvas id="captured-frame"></canvas>
-                </div>
-                <div class="right-panel">
-                    <div id="chatbox" class="chatbox"></div>
-                    <div class="input-area">
-                        <input type="text" id="user-input" placeholder="Ask me something...">
-                        <button id="send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="menu-pane" class="menu-pane hidden">
-            <div class="menu-header">
-                <button class="menu-close-btn"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="menu-items">
-                <a href="chats.html" class="menu-item">
-                    <i class="fas fa-comments"></i>
-                    <span>All Chats</span>
-                </a>
-                <a href="statistics.html" class="menu-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Statistics</span>
-                </a>
-                <a href="feedback.html" class="menu-item">
-                    <i class="fas fa-star"></i>
-                    <span>Feedback</span>
-                </a>
-                <button id="logout-btn" class="menu-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </button>
-            </div>
-        </div>
+        <div id="status" class="status"></div>
     </div>
 
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+
     <!-- Load application scripts -->
-    <script src="lib/session_manager.js"></script>
+    <script src="lib/model_loader.js"></script>
     <script src="lib/api_handler.js"></script>
-    <script src="lib/db_handler.js"></script>
-    <script src="lib/email_service.js"></script>
-    <script src="script.js"></script>
+    <script>
+        // Initialize the application when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Get API key from environment or prompt user
+                const geminiApiKey = window._env?.GEMINI_API_KEY || prompt('Please enter your Gemini API key:');
+                if (!geminiApiKey) {
+                    throw new Error('Gemini API key is required');
+                }
+
+                // Initialize API handler
+                const apiHandler = new APIHandler(geminiApiKey);
+                await apiHandler.init();
+
+                // Set up video stream
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('captured-frame');
+                const captureBtn = document.getElementById('capture-btn');
+                const statusDiv = document.getElementById('status');
+
+                // Get video stream
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: 640,
+                        height: 480,
+                        facingMode: 'user'
+                    } 
+                });
+                video.srcObject = stream;
+
+                // Set up canvas
+                canvas.width = 640;
+                canvas.height = 480;
+                const ctx = canvas.getContext('2d');
+
+                // Handle capture button click
+                captureBtn.addEventListener('click', async () => {
+                    try {
+                        // Draw video frame to canvas
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        
+                        // Get image data
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        
+                        // Show canvas temporarily
+                        canvas.style.display = 'block';
+                        
+                        // Process image
+                        const result = await apiHandler.processImage(imageData, canvas);
+                        
+                        // Display results
+                        if (result.success) {
+                            const detection = result.detections[0];
+                            statusDiv.className = 'status success';
+                            statusDiv.textContent = `Detected: ${detection.class} (${Math.round(detection.score * 100)}% confidence)`;
+                        } else {
+                            statusDiv.className = 'status error';
+                            statusDiv.textContent = 'No face detected';
+                        }
+                        
+                        // Hide canvas after 3 seconds
+                        setTimeout(() => {
+                            canvas.style.display = 'none';
+                        }, 3000);
+                    } catch (error) {
+                        console.error('Error processing image:', error);
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = `Error: ${error.message}`;
+                    }
+                });
+
+                // Show success message
+                statusDiv.className = 'status success';
+                statusDiv.textContent = 'Application initialized successfully';
+            } catch (error) {
+                console.error('Error initializing application:', error);
+                const statusDiv = document.getElementById('status');
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
 </body>
 </html>
