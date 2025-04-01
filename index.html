@@ -12,15 +12,15 @@
             EMAILJS_SERVICE_ID: 'service_dqganhw',
             EMAILJS_TEMPLATE_ID: 'template_wavm5up',
             EMAILJS_USER_ID: 'tXX17RsjHw9DKzwVu',
-            GEMINI_API_KEY: 'your_gemini_api_key'
+            GEMINI_API_KEY: 'AIzaSyDX_UFZbUAp74JY0T9Jf7_Dq__5zaz_sPc'
         };
     </script>
     <!-- Load EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <!-- Load TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Load TensorFlow.js from local -->
+    <script src="lib/tf.min.js"></script>
     <!-- Load the Gemini API -->
-    <script src="https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_API_KEY"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.2.0/dist/web/index.js"></script>
 </head>
 <body>
     <div id="blur-overlay" class="blur-overlay hidden"></div>
@@ -85,10 +85,10 @@
     </div>
 
     <!-- Load application scripts -->
-    <script src="lib/email_service.js"></script>
+    <script src="lib/session_manager.js"></script>
     <script src="lib/api_handler.js"></script>
     <script src="lib/db_handler.js"></script>
-    <script src="lib/session_manager.js"></script>
+    <script src="lib/email_service.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
