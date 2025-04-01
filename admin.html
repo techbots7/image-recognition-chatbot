@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Image Recognition Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <button id="menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-info">
+                        <h3>Total Users</h3>
+                        <p id="total-users">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-comments"></i>
+                    <div class="stat-info">
+                        <h3>Total Chats</h3>
+                        <p id="total-chats">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-star"></i>
+                    <div class="stat-info">
+                        <h3>Average Rating</h3>
+                        <p id="avg-rating">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="stat-info">
+                        <h3>Avg. Response Time</h3>
+                        <p id="avg-response-time">0s</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-chart">
+                <h2>User Activity (24 Hours)</h2>
+                <canvas id="activity-chart"></canvas>
+            </div>
+
+            <div class="admin-section">
+                <h2>Recent Chats</h2>
+                <div class="filter-controls">
+                    <input type="text" id="chat-search" placeholder="Search chats...">
+                    <select id="chat-time-filter">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div id="chats-list" class="chats-list"></div>
+            </div>
+
+            <div class="admin-section">
+                <h2>User Feedback</h2>
+                <div class="filter-controls">
+                    <input type="text" id="feedback-search" placeholder="Search feedback...">
+                    <select id="feedback-rating-filter">
+                        <option value="all">All Ratings</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                <div id="feedback-list" class="feedback-list"></div>
+            </div>
+        </div>
+
+        <div id="menu-pane" class="menu-pane">
+            <div class="menu-header">
+                <button class="menu-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="menu-items">
+                <a href="index.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="login.html" class="menu-item" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/api_handler.js"></script>
+    <script src="lib/db_handler.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html> 
