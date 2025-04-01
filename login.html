@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <h1><i class="fas fa-robot"></i> Login</h1>
+        <form id="login-form">
+            <div class="input-group">
+                <label for="id">ID:</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="id" required placeholder="Enter your ID">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" required placeholder="Enter your password">
+                </div>
+            </div>
+
+            <button type="submit" class="primary-btn login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+
+        <p class="status-text" id="login-status">
+            <i class="fas fa-info-circle"></i> Enter credentials provided by admin.
+        </p>
+
+        <button id="generate-credentials" class="secondary-btn">
+            <i class="fas fa-key"></i> Generate Credentials
+        </button>
+    </div>
+    <script src="lib/email_service.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

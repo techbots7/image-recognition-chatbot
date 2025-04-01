@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </a>
+            <h1>
+                <i class="fas fa-chart-line"></i>
+                User Statistics
+            </h1>
+        </div>
+
+        <!-- Add this new div for no interactions message -->
+        <div id="no-interactions" class="no-content hidden">
+            <i class="fas fa-info-circle"></i>
+            <p>No interactions recorded yet. Please capture or upload an image and interact with the chatbot to see statistics.</p>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="userActivityChart"></canvas>
+        </div>
+
+        <div id="stats" class="stats-container stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-comments"></i>
+                <h3>Total Interactions</h3>
+                <p id="total-interactions">0</p>
+            </div>
+
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <h3>Total Time</h3>
+                <p><span id="total-time">0</span> seconds</p>
+            </div>
+
+            <div class="stat-card">
+                <i class="fas fa-hourglass-half"></i>
+                <h3>Average Time</h3>
+                <p><span id="avg-time">0</span> seconds</p>
+            </div>
+
+            <div class="stat-card">
+                <i class="fas fa-star"></i>
+                <h3>Feedback Score</h3>
+                <p><span id="feedback-score">0</span>/5</p>
+            </div>
+
+            <div class="stat-card">
+                <i class="fas fa-images"></i>
+                <h3>Total Images Processed</h3>
+                <p id="total-images">0</p>
+            </div>
+
+            <div class="stat-card">
+                <i class="fas fa-download"></i>
+                <h3>Total Images Captured</h3>
+                <p id="total-uploads">0</p>
+            </div>
+
+            <div class="stat-card">
+                <i class="fas fa-upload"></i>
+                <h3>Total Images Uploaded</h3>
+                <p id="total-captures">0</p>
+            </div>
+
+            <div class="keywords-card">
+                <h3><i class="fas fa-keywords"></i> Most Frequent Keywords</h3>
+                <div id="keyword-stats" class="keyword-list">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/chart.min.js"></script>
+    <script src="statistics.js"></script>
+</body>
+</html>

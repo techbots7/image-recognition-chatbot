@@ -1,0 +1,32 @@
+{
+  "name": "image-recognition-chatbot",
+  "version": "1.0.0",
+  "description": "A conversational chatbot with image recognition capabilities",
+  "main": "index.html",
+  "scripts": {
+    "dev": "serve .",
+    "build": "echo 'No build step required'",
+    "start": "serve .",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "chatbot",
+    "image-recognition",
+    "ai",
+    "webcam",
+    "gemini"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@emailjs/browser": "^3.11.0",
+    "@google/generative-ai": "^0.2.0",
+    "@tensorflow/tfjs": "^4.17.0",
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "chart.js": "^4.4.1",
+    "serve": "^14.2.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.1"
+  }
+} 

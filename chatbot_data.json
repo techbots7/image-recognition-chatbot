@@ -1,0 +1,244 @@
+{
+  "team": {
+    "members": [
+      {
+        "name": "Sandeep Munaga",
+        "id": "21JR1A43G3",
+        "role": "team_member"
+      },
+      {
+        "name": "Dayananda Sagar Munagala",
+        "id": "21JR1A43G4",
+        "role": "team_member"
+      },
+      {
+        "name": "Satya Sai Nadigadda",
+        "id": "21JR1A43G5",
+        "role": "team_member"
+      },
+      {
+        "name": "Ashok Pallapu",
+        "id": "21JR1A43H3",
+        "role": "team_member"
+      },
+      {
+        "name": "Javeed Anwar Shaik",
+        "id": "21JR1A43I5",
+        "role": "team_member"
+      }
+    ],
+    "education": {
+      "degree": {
+        "name": "B. Tech",
+        "year": "Final Year",
+        "stream": "Computer Science and Engineering - Artificial Intelligence (CAI)"
+      },
+      "institution": {
+        "name": "KKR & KSR Institute of Technology & Sciences (KITS)",
+        "address": {
+          "location": "Vinjanampadu",
+          "city": "Guntur",
+          "state": "Andhra Pradesh"
+        }
+      }
+    },
+    "guide": {
+      "personal_info": {
+        "name": "Dr. S. Nagendram",
+        "designation": "Associate Professor",
+        "department": "CAI"
+      }
+    }
+  },
+  "project": {
+    "metadata": {
+      "title": "Conversational Image Recognition Chatbot",
+      "description": "A chatbot that detects objects in images and generates contextually relevant responses. Designed to function both online and offline for accessibility in resource-constrained environments."
+    },
+    "technical_details": {
+      "functionalities": {
+        "object_detection": {
+          "current_model": "Google Teachable Machine",
+          "planned_upgrade": "YOLOv9",
+          "status": "in_development"
+        },
+        "chatbot": {
+          "features": {
+            "conversational": true,
+            "text_to_speech": "planned"
+          }
+        },
+        "offline_mode": {
+          "enabled": true,
+          "description": "Ensures usability without internet dependency"
+        }
+      },
+      "development": {
+        "frontend": {
+          "files": {
+            "markup": "index.html",
+            "styling": "styles.css",
+            "logic": "script.js"
+          },
+          "design_inspiration": "Apple-inspired UI/UX",
+          "focus": "Professional and user-friendly experience"
+        },
+        "backend": {
+          "storage": {
+            "current": "JSON",
+            "type": "file-based",
+            "future_plans": "database integration"
+          }
+        }
+      }
+    },
+    "development_status": {
+      "data_preprocessing": {
+        "status": "completed",
+        "details": "Video frames extracted and resized for training"
+      },
+      "model_training": {
+        "status": "completed",
+        "platform": "Google Teachable Machine"
+      },
+      "integration": {
+        "status": "in_progress",
+        "current_task": "Chatbot interface and object detection features being developed"
+      }
+    }
+  },
+  "interaction": {
+    "responses": {
+      "greetings": {
+        "messages": [
+          "Hey there! How can I assist you today?",
+          "Hello! Hope you're having an amazing day!",
+          "Hi! What's on your mind?",
+          "Hey! Ready to explore some knowledge?",
+          "Greetings, human! How may I be of service?",
+          "Welcome! Let's make today productive!",
+          "Hello! Always here to help!"
+        ]
+      },
+      "jokes": {
+        "messages": [
+          "Why don't robots get tired? Because they recharge their batteries!",
+          "I told my computer a joke… now it won't stop giggling in binary!",
+          "Why was the AI so good at chess? It had all the right moves!",
+          "Parallel lines have so much in common. It's a shame they'll never meet!",
+          "What did the chatbot say to the website? 'You complete me!'",
+          "I tried to make a belt out of watches… It was a waist of time!",
+          "Why did the math book look sad? It had too many problems!"
+        ]
+      },
+      "farewell": {
+        "messages": [
+          "Take care! Have a fantastic day ahead!",
+          "Goodbye! Hope to chat with you soon!",
+          "See you later! Stay awesome!",
+          "It was great talking to you! Stay curious!",
+          "Until next time! Keep exploring new ideas!",
+          "Logging out… but I'll be right here when you need me!",
+          "Bye for now! Keep learning and growing!"
+        ]
+      },
+      "unknown": {
+        "messages": [
+          "I'm sorry, but I don't have an answer for that right now.",
+          "Hmm… That's a tricky one! Let me get back to you on that.",
+          "Oops! I'm still learning and don't have that info yet.",
+          "I wish I knew the answer! Maybe you can help me learn?",
+          "That's beyond my knowledge for now, but I'll improve with time!",
+          "I couldn't find a relevant answer. Would you like to ask differently?",
+          "I'm unable to provide that information, but I can try to assist in another way!"
+        ]
+      }
+    },
+    "prompts": {
+      "noImage": "Could you please provide an image to analyze?",
+      "processing": "I'm analyzing your image...",
+      "feedback": "How was my analysis? Would you like to rate it?"
+    }
+  },
+  "idGenerators": {
+    "chat": {
+      "prefix": "CHAT",
+      "length": 8,
+      "format": "CHAT_YYYYMMDD_HHMMSS_XXX"
+    },
+    "response": {
+      "prefix": "RES",
+      "length": 6,
+      "format": "RES_YYYYMMDD_HHMMSS_XX"
+    }
+  },
+  "version": "1.0",
+  "last_updated": "2024-03-20",
+  "categories": {
+    "general": {
+      "greetings": {
+        "patterns": ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"],
+        "responses": [
+          "Hello! I'm your image recognition assistant. How can I help you today?",
+          "Hi there! I can help you identify objects in images. What would you like to know?",
+          "Hey! Ready to analyze some images with you. What can I do for you?"
+        ]
+      },
+      "farewells": {
+        "patterns": ["bye", "goodbye", "see you", "thanks", "thank you"],
+        "responses": [
+          "Goodbye! Feel free to come back if you need more help!",
+          "See you later! Don't hesitate to ask if you need assistance again.",
+          "You're welcome! Have a great day!"
+        ]
+      },
+      "capabilities": {
+        "patterns": ["what can you do", "help", "capabilities", "features"],
+        "responses": [
+          "I can help you identify objects in images! You can either upload an image or use your webcam to capture one. I'll analyze the image and tell you what objects I see. You can also ask me specific questions about the objects in the image.",
+          "My main features include:\n- Object detection in images\n- Webcam image capture\n- Image upload support\n- Detailed object descriptions\n- Answering questions about detected objects"
+        ]
+      }
+    },
+    "technical": {
+      "image_processing": {
+        "patterns": ["how do you process images", "how does it work", "explain the process"],
+        "responses": [
+          "I use advanced AI models to analyze images. When you provide an image, I:\n1. Process the image data\n2. Identify objects and their characteristics\n3. Generate detailed descriptions\n4. Answer your specific questions about the content"
+        ]
+      },
+      "limitations": {
+        "patterns": ["limitations", "what can't you do", "restrictions"],
+        "responses": [
+          "While I'm quite capable, I have some limitations:\n- I work best with clear, well-lit images\n- I may not recognize very small or obscure objects\n- I can't process video or animated content\n- I can't edit or modify images"
+        ]
+      }
+    },
+    "support": {
+      "errors": {
+        "patterns": ["error", "not working", "problem", "issue"],
+        "responses": [
+          "I'm sorry you're experiencing issues. Let's try these steps:\n1. Make sure your image is clear and well-lit\n2. Try uploading the image again\n3. If using webcam, ensure it's properly connected\n4. Check your internet connection",
+          "If the problem persists, please try:\n- Refreshing the page\n- Using a different image\n- Checking your browser permissions"
+        ]
+      },
+      "contact": {
+        "patterns": ["contact", "help desk", "support", "report"],
+        "responses": [
+          "For technical support or to report issues:\n- Email: support@example.com\n- Hours: Monday-Friday, 9AM-5PM EST\n- Response time: Within 24 hours"
+        ]
+      }
+    }
+  },
+  "fallback_responses": [
+    "I'm not sure I understand. Could you please rephrase that?",
+    "I don't have enough information to answer that. Could you provide more details?",
+    "I'm not trained to handle that specific request. Is there something else I can help you with?"
+  ],
+  "context": {
+    "current_session": null,
+    "last_image": null,
+    "detected_objects": [],
+    "conversation_history": []
+  }
+}

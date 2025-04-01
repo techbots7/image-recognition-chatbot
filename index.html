@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversational Image Recognition Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <div id="blur-overlay" class="blur-overlay hidden"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Conversational Image Recognition Chatbot</h1>
+            <button id="menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
+        </div>
+
+        <div class="webcam-container">
+            <video id="webcam" autoplay playsinline></video>
+            <div class="button-group">
+                <button id="start-webcam" class="primary-btn"><i class="fas fa-camera"></i> Start Webcam</button>
+                <button id="capture-btn" class="primary-btn" disabled><i class="fas fa-camera-retro"></i> Capture</button>
+                <button id="upload-btn" class="primary-btn"><i class="fas fa-upload"></i> Upload Image</button>
+            </div>
+        </div>
+
+        <div id="chatbot-popup" class="popup hidden">
+            <div class="popup-header">
+                <button class="popup-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="popup-content">
+                <div class="left-panel">
+                    <canvas id="captured-frame"></canvas>
+                </div>
+                <div class="right-panel">
+                    <div id="chatbox" class="chatbox"></div>
+                    <div class="input-area">
+                        <input type="text" id="user-input" placeholder="Ask me something...">
+                        <button id="send-btn" class="primary-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-pane" class="menu-pane">
+            <div class="menu-header">
+                <button class="menu-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="menu-items">
+                <a href="chats.html" class="menu-item">
+                    <i class="fas fa-comments"></i>
+                    <span>All Chats</span>
+                </a>
+                <a href="statistics.html" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Statistics</span>
+                </a>
+                <a href="feedback.html" class="menu-item">
+                    <i class="fas fa-star"></i>
+                    <span>Feedback</span>
+                </a>
+                <a href="login.html" class="menu-item" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/tf.min.js"></script>
+    <script src="lib/api_handler.js"></script>
+    <script src="lib/db_handler.js"></script>
+    <script src="lib/email_service.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
