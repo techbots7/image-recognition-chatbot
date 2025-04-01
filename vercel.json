@@ -2,27 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.json",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "lib/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "my_model/**/*",
+      "src": "**/*",
       "use": "@vercel/static"
     }
   ],
@@ -32,18 +12,11 @@
       "dest": "/lib/icons/favicon.png"
     },
     {
-      "src": "/lib/(.*)",
-      "dest": "/lib/$1",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "handle": "filesystem"
     },
     {
-      "src": "/my_model/(.*)",
-      "dest": "/my_model/$1",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "src": "/lib/(.*)",
+      "dest": "/lib/$1"
     },
     {
       "src": "/(.*)",
