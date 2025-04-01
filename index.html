@@ -13,7 +13,8 @@
         window._env = {
             EMAILJS_SERVICE_ID: 'service_dqganhw',
             EMAILJS_TEMPLATE_ID: 'template_wavm5up',
-            EMAILJS_USER_ID: 'tXX17RsjHw9DKzwVu'
+            EMAILJS_USER_ID: 'tXX17RsjHw9DKzwVu',
+            GEMINI_API_KEY: 'your_gemini_api_key'
         };
     </script>
 </head>
@@ -21,34 +22,20 @@
     <div id="blur-overlay" class="blur-overlay hidden"></div>
 
     <div class="container">
-        <header>
+        <div class="header">
             <h1><i class="fas fa-robot"></i> Image Recognition Chatbot</h1>
-            <button id="logout-btn" class="secondary-btn">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-        </header>
+            <button id="menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
+        </div>
 
-        <main>
-            <div class="chat-container">
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Messages will be added here -->
-                </div>
-                <div class="input-container">
-                    <div class="image-upload">
-                        <input type="file" id="image-input" accept="image/*" hidden>
-                        <button id="upload-btn" class="secondary-btn">
-                            <i class="fas fa-image"></i> Upload Image
-                        </button>
-                    </div>
-                    <div class="text-input">
-                        <input type="text" id="user-input" placeholder="Type your message...">
-                        <button id="send-btn" class="primary-btn">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </div>
+        <div class="webcam-container">
+            <video id="webcam" autoplay playsinline></video>
+            <div class="button-group">
+                <button id="start-webcam" class="primary-btn"><i class="fas fa-camera"></i> Start Webcam</button>
+                <button id="capture-btn" class="primary-btn" disabled><i class="fas fa-camera-retro"></i> Capture</button>
+                <button id="upload-btn" class="primary-btn"><i class="fas fa-upload"></i> Upload Image</button>
+                <input type="file" id="image-input" accept="image/*" hidden>
             </div>
-        </main>
+        </div>
 
         <div id="chatbot-popup" class="popup hidden">
             <div class="popup-header">
@@ -68,7 +55,7 @@
             </div>
         </div>
 
-        <div id="menu-pane" class="menu-pane">
+        <div id="menu-pane" class="menu-pane hidden">
             <div class="menu-header">
                 <button class="menu-close-btn"><i class="fas fa-times"></i></button>
             </div>
@@ -85,15 +72,19 @@
                     <i class="fas fa-star"></i>
                     <span>Feedback</span>
                 </a>
-                <a href="login.html" class="menu-item" id="logout-btn">
+                <button id="logout-btn" class="menu-item">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
-                </a>
+                </button>
             </div>
         </div>
     </div>
 
-    <script src="lib/tf.min.js"></script>
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <!-- Load the Gemini API -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
+    <!-- Load application scripts -->
     <script src="lib/api_handler.js"></script>
     <script src="lib/db_handler.js"></script>
     <script src="lib/email_service.js"></script>
