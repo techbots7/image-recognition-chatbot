@@ -45,6 +45,12 @@
             color: #2e7d32;
         }
     </style>
+    <!-- Environment Variables -->
+    <script>
+        window._env = {
+            GEMINI_API_KEY: "AIzaSyDX_UFZbUAp74JY0T9Jf7_Dq__5zaz_sPc"
+        };
+    </script>
 </head>
 <body>
     <div class="container">
@@ -61,6 +67,10 @@
 
     <!-- Load TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    
+    <!-- Load Gemini API -->
+    <script src="https://generativelanguage.googleapis.com/v1beta/models?key=AIzaSyDX_UFZbUAp74JY0T9Jf7_Dq__5zaz_sPc"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.2.0/dist/web/index.js"></script>
 
     <!-- Load application scripts -->
     <script src="lib/model_loader.js"></script>
@@ -69,10 +79,10 @@
         // Initialize the application when the DOM is loaded
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // Get API key from environment or prompt user
-                const geminiApiKey = window._env?.GEMINI_API_KEY || prompt('Please enter your Gemini API key:');
+                // Get API key from environment
+                const geminiApiKey = window._env?.GEMINI_API_KEY;
                 if (!geminiApiKey) {
-                    throw new Error('Gemini API key is required');
+                    throw new Error('Gemini API key not found in environment variables');
                 }
 
                 // Initialize API handler
