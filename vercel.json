@@ -2,17 +2,38 @@
   "version": 2,
   "builds": [
     {
-      "src": "**/*",
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "lib/**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/favicon.ico",
-      "dest": "/lib/icons/favicon.png"
+      "src": "/",
+      "dest": "/index.html"
     },
     {
-      "handle": "filesystem"
+      "src": "/login",
+      "dest": "/login.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/chats",
+      "dest": "/chats.html"
+    },
+    {
+      "src": "/feedback",
+      "dest": "/feedback.html"
+    },
+    {
+      "src": "/statistics",
+      "dest": "/statistics.html"
     },
     {
       "src": "/lib/(.*)",

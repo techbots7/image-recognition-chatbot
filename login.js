@@ -1,82 +1,107 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const loginForm = document.getElementById('login-form');
-    const generateBtn = document.getElementById('generate-credentials');
-    const loginStatus = document.getElementById('login-status');
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("login-form");
+    const loginStatus = document.getElementById("login-status");
+    const generateCredentialsBtn = document.getElementById("generate-credentials");
 
-    // Check if user is already logged in
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const loginTime = localStorage.getItem('loginTime');
-    const currentTime = new Date().getTime();
-    const sessionTimeout = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-
-    if (isLoggedIn && loginTime) {
-        const timeSinceLogin = currentTime - parseInt(loginTime);
-        if (timeSinceLogin < sessionTimeout) {
-            // Session is still valid, redirect to main page
-            window.location.href = 'index.html';
-            return;
-        } else {
-            // Session expired, clear login state
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('loginTime');
-            localStorage.removeItem('userCredentials');
-        }
+    if (localStorage.getItem("authenticated")) {
+        window.location.href = "index.html";
+        return;
     }
 
-    // Initialize email service
-    try {
-        await window.EmailService.init();
-    } catch (error) {
-        console.error('Failed to initialize email service:', error);
-        loginStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email service initialization failed.';
-    }
-
-    // Handle login form submission
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    generateCredentialsBtn.addEventListener("click", () => {
+        const credentials = generateCredentials();
+        localStorage.setItem("credentials", JSON.stringify(credentials));
         
-        const id = document.getElementById('id').value;
-        const password = document.getElementById('password').value;
+        loginStatus.innerHTML = `
+            <i class="fas fa-info-circle"></i>
+            Credentials generated. Valid for 24 hours.
+        `;
+        console.log(`Generated Credentials:
+            ID: ${credentials.id}
+            Password: ${credentials.password}
+            Expires: ${new Date(credentials.expiration).toLocaleString()}`);
+    });
 
-        try {
-            // Store credentials and login state
-            localStorage.setItem('userCredentials', JSON.stringify({ id, password }));
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('loginTime', currentTime.toString());
-            
-            // Redirect to main page
-            window.location.href = 'index.html';
-        } catch (error) {
-            console.error('Login error:', error);
-            loginStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Login failed. Please try again.';
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("id").value;
+        const password = document.getElementById("password").value;
+        const credentialsData = JSON.parse(localStorage.getItem("credentials"));
+
+        if (!credentialsData) {
+            showStatus("No credentials found. Generate credentials first.", "error");
+            return;
+        }
+
+        const now = new Date();
+        const expiration = new Date(credentialsData.expiration);
+
+        if (now > expiration) {
+            showStatus("Credentials have expired. Please generate new ones.", "error");
+            localStorage.removeItem("credentials");
+            return;
+        }
+
+        if (id === credentialsData.id && password === credentialsData.password) {
+            try {
+                const authData = {
+                    userId: id,
+                    loginTime: new Date().toISOString(),
+                    sessionExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                };
+                
+                localStorage.setItem("authenticated", "true");
+                localStorage.setItem("authData", JSON.stringify(authData));
+                
+                showStatus("Login successful! Redirecting...", "success");
+                setTimeout(() => window.location.href = "index.html", 1500);
+            } catch (error) {
+                console.error("Login error:", error);
+                showStatus("An error occurred during login.", "error");
+            }
+        } else {
+            showStatus("Invalid credentials.", "error");
         }
     });
 
-    // Handle credentials generation
-    generateBtn.addEventListener('click', async () => {
-        try {
-            // Generate random credentials
-            const id = Math.random().toString(36).substring(2, 8);
-            const password = Math.random().toString(36).substring(2, 12);
-            
-            // Show loading state
-            loginStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating credentials...';
-            generateBtn.disabled = true;
+    function showStatus(message, type) {
+        loginStatus.innerHTML = `
+            <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+            ${message}
+        `;
+        loginStatus.className = `status-text ${type}`;
+    }
 
-            // Send credentials via email (using default email)
-            await window.EmailService.sendCredentials(null, { id, password });
+    function generateCredentials() {
+        const id = generateRandomString(7, true, true);
+        const password = generateRandomString(13, true, true);
+        const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        return { id, password, expiration };
+    }
 
-            // Show success message
-            loginStatus.innerHTML = '<i class="fas fa-check-circle"></i> Credentials sent successfully!';
-            
-            // Clear form
-            document.getElementById('id').value = '';
-            document.getElementById('password').value = '';
-        } catch (error) {
-            console.error('Error generating credentials:', error);
-            loginStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to generate credentials. Please try again.';
-        } finally {
-            generateBtn.disabled = false;
+    function generateRandomString(length, includeSpecial = true, includeNumbers = true) {
+        const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        const numbers = "0123456789";
+        const specials = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+        let characters = alphabets;
+        if (includeNumbers) characters += numbers;
+        if (includeSpecial) characters += specials;
+
+        let result = "";
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
-    });
+
+        result = ensureChars(result, 3, specials);
+        result = ensureChars(result, 2, numbers);
+        return result;
+    }
+
+    function ensureChars(str, count, source) {
+        for (let i = 0; i < count; i++) {
+            const pos = Math.floor(Math.random() * str.length);
+            str = str.substring(0, pos) + source.charAt(Math.floor(Math.random() * source.length)) + str.substring(pos + 1);
+        }
+        return str;
+    }
 });
