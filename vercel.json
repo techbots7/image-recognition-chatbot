@@ -18,28 +18,28 @@
       "use": "@vercel/static"
     },
     {
-      "src": "lib/**/*",
+      "src": "lib/**",
       "use": "@vercel/static"
     },
     {
-      "src": "my_model/**/*",
+      "src": "my_model/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/my_model/(.*)",
+      "src": "/lib/(.*)",
+      "dest": "/lib/$1",
       "headers": {
         "cache-control": "public, max-age=31536000, immutable"
-      },
-      "continue": true
+      }
     },
     {
-      "src": "/lib/(.*)",
+      "src": "/my_model/(.*)",
+      "dest": "/my_model/$1",
       "headers": {
         "cache-control": "public, max-age=31536000, immutable"
-      },
-      "continue": true
+      }
     },
     {
       "src": "/(.*)",
@@ -52,4 +52,4 @@
     "EMAILJS_TEMPLATE_ID": "template_wavm5up",
     "EMAILJS_USER_ID": "tXX17RsjHw9DKzwVu"
   }
-} 
+}
