@@ -1,5 +1,3 @@
-import emailService from './lib/email_service.js';
-
 document.addEventListener('DOMContentLoaded', async () => {
     const loginForm = document.getElementById('login-form');
     const generateBtn = document.getElementById('generate-credentials');
@@ -27,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize email service
     try {
-        await emailService.init();
+        await window.EmailService.init();
     } catch (error) {
         console.error('Failed to initialize email service:', error);
         loginStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email service initialization failed.';
@@ -66,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             generateBtn.disabled = true;
 
             // Send credentials via email (using default email)
-            await emailService.sendCredentials(null, { id, password });
+            await window.EmailService.sendCredentials(null, { id, password });
 
             // Show success message
             loginStatus.innerHTML = '<i class="fas fa-check-circle"></i> Credentials sent successfully!';
