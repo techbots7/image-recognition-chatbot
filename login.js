@@ -39,21 +39,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             const id = Math.random().toString(36).substring(2, 8);
             const password = Math.random().toString(36).substring(2, 12);
             
-            // Get email from user
-            const email = prompt('Please enter your email address to receive credentials:');
-            if (!email) {
-                throw new Error('Email is required');
-            }
-
             // Show loading state
             loginStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating credentials...';
             generateBtn.disabled = true;
 
-            // Send credentials via email
-            await emailService.sendCredentials(email, { id, password });
+            // Send credentials via email (using default email)
+            await emailService.sendCredentials(null, { id, password });
 
             // Show success message
-            loginStatus.innerHTML = '<i class="fas fa-check-circle"></i> Credentials sent to your email!';
+            loginStatus.innerHTML = '<i class="fas fa-check-circle"></i> Credentials sent successfully!';
             
             // Clear form
             document.getElementById('id').value = '';
