@@ -20,16 +20,27 @@
     {
       "src": "lib/**/*",
       "use": "@vercel/static"
+    },
+    {
+      "src": "my_model/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/my_model/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
+    },
     {
       "src": "/(.*)",
       "dest": "/$1"
     }
   ],
   "env": {
-    "GEMINI_API_KEY": "your_gemini_api_key_here",
+    "GEMINI_API_KEY": "AIzaSyDX_UFZbUAp74JY0T9Jf7_Dq__5zaz_sPc",
     "EMAILJS_SERVICE_ID": "service_dqganhw",
     "EMAILJS_TEMPLATE_ID": "template_wavm5up",
     "EMAILJS_USER_ID": "tXX17RsjHw9DKzwVu"
