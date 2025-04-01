@@ -18,15 +18,19 @@
       "use": "@vercel/static"
     },
     {
-      "src": "lib/**",
+      "src": "lib/**/*",
       "use": "@vercel/static"
     },
     {
-      "src": "my_model/**",
+      "src": "my_model/**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/favicon.ico",
+      "dest": "/lib/icons/favicon.png"
+    },
     {
       "src": "/lib/(.*)",
       "dest": "/lib/$1",
