@@ -20,23 +20,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     const popupCloseBtn = document.querySelector(".popup-close-btn");
 
     let stream;
-    let chatbotData = {};
+    let chatbotData = null;
     let chatStartTime;
     let currentChatId;
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
 
     // Initialize handlers
     const apiHandler = new APIHandler();
     const dbHandler = new DBHandler();
     const emailService = new EmailService();
 
-    try {
-        const response = await fetch("chatbot_data.json");
-        chatbotData = await response.json();
-        addMessage("System initialized successfully! Start the webcam to capture an image.", "bot");
-    } catch (error) {
-        console.error("Error loading resources:", error);
-        addMessage("Error loading resources. Please refresh the page.", "bot");
+    // Function to load chatbot data
+    async function loadChatbotData() {
+        try {
+            const response = await fetch("chatbot_data.json");
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            chatbotData = await response.json();
+            addMessage("System initialized successfully! Start the webcam to capture an image.", "bot");
+            return true;
+        } catch (error) {
+            console.error("Error loading resources:", error);
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                addMessage(`Failed to load data, retrying... (Attempt ${retryCount}/${MAX_RETRIES})`, "bot");
+                setTimeout(loadChatbotData, 2000); // Retry after 2 seconds
+                return false;
+            } else {
+                addMessage("Error: Unable to load system resources. Please check your connection and refresh the page.", "error");
+                return false;
+            }
+        }
     }
+
+    // Initial data load
+    await loadChatbotData();
 
     startWebcam.addEventListener("click", async () => {
         try {
