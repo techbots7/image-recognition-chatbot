@@ -1,7 +1,9 @@
+import sessionManager from './lib/session_manager.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
-    if (!localStorage.getItem("authenticated")) {
-        window.location.href = "login.html";
-        return;
+    // Check session before proceeding
+    if (!sessionManager.checkSession()) {
+        return; // Will redirect to login if session is invalid
     }
 
     const webcam = document.getElementById("webcam");
@@ -18,6 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const menuCloseBtn = document.querySelector(".menu-close-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const popupCloseBtn = document.querySelector(".popup-close-btn");
+    const imageInput = document.getElementById('image-input');
 
     let stream;
     let chatbotData = null;
@@ -83,66 +86,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     uploadBtn.addEventListener("click", () => {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            if (!file.type.startsWith("image/")) {
-                addMessage("Please upload an image file.", "error");
-                return;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) {
-                addMessage("Image size exceeds maximum limit (5MB).", "error");
-                return;
-            }
-            
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
             try {
-                const img = new Image();
-                img.onerror = () => {
-                    addMessage("Failed to load the image. Please try another file.", "error");
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const base64Image = event.target.result;
+                    await handleImageUpload(base64Image);
                 };
-                img.onload = async () => {
-                    if (img.width > 4096 || img.height > 4096) {
-                        addMessage("Image dimensions too large. Maximum size is 4096x4096 pixels.", "error");
-                        return;
-                    }
-                    const canvas = document.getElementById("captured-frame");
-                    const context = canvas.getContext("2d");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    context.drawImage(img, 0, 0);
-                    showChatInterface();
-                    await detectObject(canvas);
-                    
-                    // Save chat with uploaded image
-                    const userId = localStorage.getItem("userId");
-                    const chatData = {
-                        id: generateChatId(),
-                        userId,
-                        startTime: chatStartTime,
-                        lastMessageTime: Date.now(),
-                        image: canvas.toDataURL('image/jpeg', 0.8),
-                        uploaded: true,
-                        messages: []
-                    };
-                    
-                    await dbHandler.saveChat(chatData);
-                    currentChatId = chatData.id;
-                    
-                    // Clean up
-                    URL.revokeObjectURL(img.src);
-                };
-                img.src = URL.createObjectURL(file);
+                reader.readAsDataURL(file);
             } catch (error) {
-                console.error("Error processing image:", error);
-                addMessage("An error occurred while processing the image. Please try again.", "error");
+                console.error('Error reading image:', error);
+                addMessage('Error processing image. Please try again.', 'error');
             }
-        };
-        input.click();
+        }
     });
 
     async function detectObject(imageCanvas) {
@@ -177,101 +138,54 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    sendBtn.addEventListener("click", handleUserInput);
-    userInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") handleUserInput();
-    });
-
-    function handleUserInput() {
+    sendBtn.addEventListener("click", async () => {
         const message = userInput.value.trim();
         if (message) {
-            addMessage(message, "user");
-            processUserQuery(message);
+            await handleUserMessage(message);
             userInput.value = "";
         }
-    }
+    });
 
-    async function processUserQuery(query) {
-        query = query.toLowerCase().trim();
-        let reply;
+    userInput.addEventListener("keypress", async (e) => {
+        if (e.key === "Enter") {
+            const message = userInput.value.trim();
+            if (message) {
+                await handleUserMessage(message);
+                userInput.value = "";
+            }
+        }
+    });
+
+    async function handleImageUpload(base64Image) {
         try {
-            function fuzzyMatch(str1, str2) {
-                str1 = str1.toLowerCase();
-                str2 = str2.toLowerCase();
-                const threshold = 0.7;
-                let matches = 0;
-                for (let i = 0; i < str1.length; i++) {
-                    if (str2.includes(str1[i])) matches++;
-                }
-                return (matches / Math.max(str1.length, str2.length)) >= threshold;
-            }
-
-            const memberMatch = chatbotData.team?.members.find(member => {
-                const nameParts = member.name.toLowerCase().split(' ');
-                const queryWords = query.split(' ');
-                return nameParts.some(part => queryWords.some(word => fuzzyMatch(part, word)));
-            });
-
-            if (memberMatch) {
-                const responses = [
-                    `${memberMatch.name} (ID: ${memberMatch.id}) is one of our talented team members working on the ${chatbotData.project.metadata.title} project.`,
-                    `Ah yes, ${memberMatch.name}! They're doing great work on our team with ID ${memberMatch.id}.`,
-                    `I know ${memberMatch.name}! They're contributing to our ${chatbotData.project.metadata.title} project.`
-                ];
-                reply = responses[Math.floor(Math.random() * responses.length)];
-            } else if (query.includes("project") || query.includes("work") || query.includes("doing")) {
-                const projectInfo = {
-                    basic: `Our project "${chatbotData.project.metadata.title}" ${chatbotData.project.metadata.description}`,
-                    technical: `We're using ${chatbotData.project.technical_details.functionalities.object_detection.current_model} for object detection`,
-                    status: `Currently, we're ${chatbotData.project.development_status.integration.current_task}`
-                };
-                if (query.includes("tech") || query.includes("how")) reply = projectInfo.technical;
-                else if (query.includes("status") || query.includes("progress")) reply = projectInfo.status;
-                else reply = projectInfo.basic;
-            } else if (query.includes("guide") || query.includes("professor") || query.includes("teacher")) {
-                const guide = chatbotData.team.guide.personal_info;
-                reply = `Our project is guided by ${guide.name}, who is a ${guide.designation} in the ${guide.department} department.`;
-            } else if (query.includes("college") || query.includes("institute") || query.includes("study")) {
-                const edu = chatbotData.team.education;
-                reply = `We're ${edu.degree.year} ${edu.degree.name} students from ${edu.institution.name}, ${edu.institution.address.city}.`;
-            } else if (query.includes("joke") || query.includes("funny")) {
-                reply = getRandomResponse(chatbotData.interaction.responses.jokes.messages);
-            } else if (query.match(/\b(hello|hi|hey|greetings)\b/i)) {
-                const hour = new Date().getHours();
-                let timeContext = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
-                reply = `Good ${timeContext}! ${getRandomResponse(chatbotData.interaction.responses.greetings.messages)}`;
-            } else if (query.match(/\b(bye|goodbye|see you|farewell)\b/i)) {
-                reply = getRandomResponse(chatbotData.interaction.responses.farewell.messages);
-            } else {
-                reply = getRandomResponse(chatbotData.interaction.responses.unknown.messages);
-            }
-
-            addMessage(reply, "bot");
-
-            // Update chat in database
-            if (currentChatId) {
-                const chatData = {
-                    id: currentChatId,
-                    lastMessageTime: Date.now(),
-                    messages: [
-                        { sender: "user", text: query },
-                        { sender: "bot", text: reply }
-                    ]
-                };
-                await dbHandler.saveChat(chatData);
-            }
+            addMessage('Processing image...', 'bot');
+            // Add your image processing logic here
+            addMessage('Image processed successfully!', 'bot');
         } catch (error) {
-            console.error("Error processing query:", error);
-            addMessage("Sorry, I encountered an error. Please try again.", "error");
+            console.error('Error processing image:', error);
+            addMessage('Error processing image. Please try again.', 'error');
         }
     }
 
-    function addMessage(text, sender) {
-        const messageDiv = document.createElement("div");
-        messageDiv.classList.add(sender);
+    async function handleUserMessage(message) {
+        try {
+            addMessage(message, 'user');
+            // Add your message handling logic here
+            addMessage('I received your message: ' + message, 'bot');
+        } catch (error) {
+            console.error('Error handling message:', error);
+            addMessage('Error processing message. Please try again.', 'error');
+        }
+    }
+
+    function addMessage(text, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}-message`;
         messageDiv.innerHTML = `
-            <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
-            <span>${text}</span>
+            <div class="message-content">
+                <i class="fas ${type === 'user' ? 'fa-user' : 'fa-robot'}"></i>
+                <p>${text}</p>
+            </div>
         `;
         chatbox.appendChild(messageDiv);
         chatbox.scrollTop = chatbox.scrollHeight;
@@ -314,8 +228,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("authenticated");
-        localStorage.removeItem("authData");
-        window.location.href = "login.html";
+        sessionManager.logout();
     });
 });

@@ -5,6 +5,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const generateBtn = document.getElementById('generate-credentials');
     const loginStatus = document.getElementById('login-status');
 
+    // Check if user is already logged in
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const loginTime = localStorage.getItem('loginTime');
+    const currentTime = new Date().getTime();
+    const sessionTimeout = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+    if (isLoggedIn && loginTime) {
+        const timeSinceLogin = currentTime - parseInt(loginTime);
+        if (timeSinceLogin < sessionTimeout) {
+            // Session is still valid, redirect to main page
+            window.location.href = 'index.html';
+            return;
+        } else {
+            // Session expired, clear login state
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('loginTime');
+            localStorage.removeItem('userCredentials');
+        }
+    }
+
     // Initialize email service
     try {
         await emailService.init();
@@ -21,8 +41,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const password = document.getElementById('password').value;
 
         try {
-            // Store credentials in localStorage
+            // Store credentials and login state
             localStorage.setItem('userCredentials', JSON.stringify({ id, password }));
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('loginTime', currentTime.toString());
             
             // Redirect to main page
             window.location.href = 'index.html';
