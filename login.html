@@ -6,6 +6,16 @@
     <title>Login - Chatbot</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="lib/fontawesome/css/all.min.css">
+    <!-- Load EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Environment Variables -->
+    <script>
+        window._env = {
+            EMAILJS_SERVICE_ID: 'service_dqganhw',
+            EMAILJS_TEMPLATE_ID: 'template_wavm5up',
+            EMAILJS_USER_ID: 'tXX17RsjHw9DKzwVu'
+        };
+    </script>
 </head>
 <body>
     <div class="login-container">
@@ -40,6 +50,7 @@
             <i class="fas fa-key"></i> Generate Credentials
         </button>
     </div>
+    <script src="lib/email_service.js"></script>
     <script src="login.js"></script>
 </body>
 </html>
